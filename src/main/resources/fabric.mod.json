@@ -1,35 +1,45 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "forgotten",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Where They Stood",
+  "description": "What once was...",
+  "accessWidener" : "forgotten.accesswidener",
   "authors": [
-    "Me!"
+    "Azazelthedemonlord"
   ],
   "contact": {
     "homepage": "https://fabricmc.net/",
     "sources": "https://github.com/FabricMC/fabric-example-mod"
   },
 
-  "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "license": "All Rights Reserved",
+  "icon": "assets/forgotten/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      {
+        "adapter": "kotlin",
+        "value": "net.azzy.forgotten.Forgotten"
+      }
+    ],
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "net.azzy.forgotten.ClientInit"
+      }
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "forgotten.mixins.json"
   ],
 
   "depends": {
     "fabricloader": ">=0.7.4",
     "fabric": "*",
-    "minecraft": "1.16.x"
+    "minecraft": "1.16.3"
   },
   "suggests": {
     "flamingo": "*"
