@@ -1,11 +1,9 @@
 package net.azzy.forgotten.render.entity
 
+import net.azzy.forgotten.Forgotten
 import net.azzy.forgotten.entity.ProjectileSpellEntity
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry
-import net.minecraft.client.render.OverlayTexture
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.VertexConsumer
-import net.minecraft.client.render.VertexConsumerProvider
+import net.minecraft.client.render.*
 import net.minecraft.client.render.entity.DragonFireballEntityRenderer
 import net.minecraft.client.render.entity.EntityRenderDispatcher
 import net.minecraft.client.render.entity.EntityRenderer
@@ -16,7 +14,7 @@ import net.minecraft.util.math.Matrix3f
 import net.minecraft.util.math.Matrix4f
 import net.minecraft.world.World
 
-class ProjectileSpellRenderer(dispatcher: EntityRenderDispatcher, val context: EntityRendererRegistry.Context) : EntityRenderer<ProjectileSpellEntity>(dispatcher) {
+class ProjectileSpellRenderer(dispatcher: EntityRenderDispatcher) : EntityRenderer<ProjectileSpellEntity>(dispatcher) {
 
     private val TEXTURE = Identifier("textures/entity/enderdragon/dragon_fireball.png")
 
@@ -24,8 +22,13 @@ class ProjectileSpellRenderer(dispatcher: EntityRenderDispatcher, val context: E
         return TEXTURE
     }
 
+    override fun shouldRender(entity: ProjectileSpellEntity?, frustum: Frustum?, x: Double, y: Double, z: Double): Boolean {
+        return true
+    }
+
     override fun render(entity: ProjectileSpellEntity, yaw: Float, tickDelta: Float, matrices: MatrixStack, vertexConsumers: VertexConsumerProvider, light: Int) {
         val world: World = entity.world
+        Forgotten.WTSLog.error("I am alive! is nice")
         matrices.push()
         matrices.scale(2.0f, 2.0f, 2.0f)
         matrices.multiply(dispatcher.rotation)
