@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "forgotten:block/engraving_table"
+    },
+    "facing=east": {
+      "model": "forgotten:block/engraving_table",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "forgotten:block/engraving_table",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "forgotten:block/engraving_table",
+      "y": 270
+    }
+  }
+}

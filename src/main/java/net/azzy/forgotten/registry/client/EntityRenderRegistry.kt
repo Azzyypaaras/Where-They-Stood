@@ -12,10 +12,8 @@ import java.util.function.BiConsumer
 
 object EntityRenderRegistry {
 
-    init {}
-
     fun init() {
-        register(EntityRegistry.PROJECTILE_SPELL_ENTITY, {a, b -> ProjectileSpellRender(a)})
+        register(EntityRegistry.PROJECTILE_SPELL_ENTITY) { a, b -> return@register ProjectileSpellRenderer(a) }
     }
 
     private fun register(type: EntityType<*>, factory: EntityRendererRegistry.Factory) {

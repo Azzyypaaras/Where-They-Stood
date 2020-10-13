@@ -22,10 +22,6 @@ class ProjectileSpellRenderer(dispatcher: EntityRenderDispatcher) : EntityRender
         return TEXTURE
     }
 
-    override fun shouldRender(entity: ProjectileSpellEntity?, frustum: Frustum?, x: Double, y: Double, z: Double): Boolean {
-        return true
-    }
-
     override fun render(entity: ProjectileSpellEntity, yaw: Float, tickDelta: Float, matrices: MatrixStack, vertexConsumers: VertexConsumerProvider, light: Int) {
         val world: World = entity.world
         Forgotten.WTSLog.error("I am alive! is nice")
