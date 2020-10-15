@@ -4,14 +4,11 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.screen.slot.Slot
+import java.util.function.Predicate
 
-open class ImmutableSlot(inventory: Inventory, index: Int, x: Int, y: Int) : Slot(inventory, index, x, y) {
+class FilteredSlot(inv: Inventory, index: Int, x: Int, y: Int, private val filter: Predicate<ItemStack>) : Slot(inv, index, x, y) {
 
     override fun canInsert(stack: ItemStack?): Boolean {
-        return false
-    }
-
-    override fun canTakeItems(playerEntity: PlayerEntity?): Boolean {
-        return false
+        return filter.test(stack!!)
     }
 }

@@ -2,8 +2,12 @@ package net.azzy.forgotten
 
 import net.azzy.forgotten.registry.*
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
+import net.minecraft.item.ItemGroup
+import net.minecraft.item.ItemStack
 import net.minecraft.network.packet.s2c.play.EntityS2CPacket
+import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
 
 class Forgotten : ModInitializer{
@@ -14,11 +18,11 @@ class Forgotten : ModInitializer{
         BlockEntityRegistry.init()
         ScreenHandlerRegistry.init()
         EntityRegistry.init()
-        EntityPacketRegistry.init()
     }
 
     companion object{
         const val MOD_ID = "forgotten"
+        val FORGOTTEN_TAB: ItemGroup = FabricItemGroupBuilder.build(Identifier(MOD_ID, "aaaa")) { ItemStack(ItemRegistry.PLATE_BASIC.first) }
         val WTSLog = LogManager.getLogger(MOD_ID)
     }
 }

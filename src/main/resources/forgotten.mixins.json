@@ -4,10 +4,10 @@
   "package": "net.azzy.forgotten.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "SlotShifterMixin",
-    "HandledScreenMixin"
+    "SlotShifterMixin"
   ],
   "client": [
+    "HandledScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

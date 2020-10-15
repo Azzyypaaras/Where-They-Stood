@@ -11,5 +11,5 @@ object ScreenHandlerRegistry {
     fun init() {}
 
     val CARVING_GID = Identifier(MOD_ID, "carving_gui")
-    val CARVING_SCREEN_HANDLER =  ScreenHandlerRegistry.registerSimple(CARVING_GID, ::CarvingScreenHandler)
+    val CARVING_SCREEN_HANDLER =  ScreenHandlerRegistry.registerExtended(CARVING_GID, ::CarvingScreenHandler)
 }
