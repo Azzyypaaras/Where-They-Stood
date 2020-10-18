@@ -1,12 +1,14 @@
 package net.azzy.forgotten.item
 
 import net.azzy.forgotten.entity.ProjectileSpellEntity
+import net.azzy.forgotten.registry.SpellRegistry
 import net.azzy.forgotten.util.context.ContextConsumer
 import net.azzy.forgotten.util.context.SpellContext
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.projectile.FireballEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.Hand
@@ -24,10 +26,10 @@ class TestWandItem(settings: Settings) : Item(settings) {
                     val pos = pkg.pos
                     pkg.world.createExplosion(pkg.spell, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(), 4f, Explosion.DestructionType.NONE)
                     pkg.spell.kill()
-                }, SpellContext.DESPAWN)
+                }, SpellContext.DESPAWN), SpellRegistry[Items.GOLDEN_PICKAXE]!!.spell
         ))
         entity.setItem(itemStack)
-        entity.setProperties(user, user.pitch, user.yaw, 0.0f, 1.0f, 1.0f)
+        entity.setProperties(user, user.pitch, user.yaw, 0.0f, 0.333f, 0.333f)
         world.spawnEntity(entity)
         return TypedActionResult.success(itemStack)
     }

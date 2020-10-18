@@ -1,18 +1,27 @@
 package net.azzy.forgotten.blockentity
 
+import net.azzy.forgotten.Forgotten.Companion.WTSLog
 import net.azzy.forgotten.gui.CarvingScreenHandler
+import net.azzy.forgotten.item.RuneItem
 import net.azzy.forgotten.registry.BlockEntityRegistry
+import net.azzy.forgotten.registry.InternalRegistries
+import net.azzy.forgotten.registry.ItemRegistry
+import net.azzy.forgotten.registry.SpellRegistry
 import net.azzy.forgotten.render.util.InventoryWrapper
-import net.azzy.forgotten.util.shenanigans.ScreenHandlerBirthplace
+import net.azzy.forgotten.util.context.SpellContext
+import net.azzy.forgotten.util.spell.ColorHelper
+import net.azzy.forgotten.util.spell.SpellStruct
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
 import net.minecraft.block.BlockState
 import net.minecraft.block.InventoryProvider
 import net.minecraft.block.entity.BlockEntity
+import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.inventory.Inventories
 import net.minecraft.inventory.SidedInventory
+import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.CompoundTag
@@ -22,7 +31,6 @@ import net.minecraft.screen.ScreenHandler
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
-import net.minecraft.util.Identifier
 import net.minecraft.util.Tickable
 import net.minecraft.util.collection.DefaultedList
 import net.minecraft.util.math.BlockPos
@@ -65,6 +73,60 @@ class CarvingTableEntity : BlockEntity(BlockEntityRegistry.CARVING_TABLE_ENTITY)
         val stack = inventory[0]
         inventory[0] = ItemStack.EMPTY
         return stack
+    }
+
+    fun attemptRuneCraft(): Boolean {
+        val rawRune = inventory[0].item
+        if(!InternalRegistries.Registries.BLANK.contains(rawRune))
+            return false
+        var potency = 1.0
+        val context = SpellContext[inventory[19].item] ?: return false
+        if(checkSpellContext(context)) {
+            val spells = getSpells()
+            val outRune = ItemStack(ItemRegistry.RUNE_BASIC[RuneItem.RuneType.NONE.getByPair(context) ?: return false])
+            if(inventory[16].item == Items.GLOWSTONE_DUST)
+                potency += inventory[16].count / 4.0
+            val tag = CompoundTag()
+            tag.putString("spellKey", SpellRegistry[spell].toString())
+            tag.putDouble("potency", potency)
+            tag.putInt("color", ColorHelper toHex spell.color)
+            outRune.tag = tag
+            world!!.spawnEntity(ItemEntity(world, pos.x.toDouble(), pos.y + 1.0, pos.z.toDouble(), outRune))
+            clearCategory()
+            return true
+        }
+        return false
+    }
+
+    private fun getSpells(): List<Pair<SpellStruct, ItemStack>> {
+        val firstSpell = SpellRegistry[inventory[13].item]
+        val secSpell = SpellRegistry[inventory[14].item]
+        val thirdSpell = SpellRegistry[inventory[15].item]
+        val spells = mutableListOf<Pair<SpellStruct, ItemStack>>()
+        if(firstSpell != null) spells.add(Pair(firstSpell, inventory[16]))
+        if(secSpell != null) spells.add(Pair(secSpell, inventory[17]))
+        if(thirdSpell != null) spells.add(Pair(thirdSpell, inventory[18]))
+        return spells
+    }
+
+    private fun checkSpellContext(context: SpellContext): Boolean {
+        val slotOne = inventory[13]
+        val slotTwo = inventory[14]
+        val slotThree = inventory[15]
+        return if(!(slotOne.isEmpty && slotTwo.isEmpty && slotThree.isEmpty)) {
+            (slotOne.isEmpty || SpellRegistry[slotOne.item]?.spell?.context == context) && (slotTwo.isEmpty || SpellRegistry[slotTwo.item]?.spell?.context == context) && (slotThree.isEmpty || SpellRegistry[slotThree.item]?.spell?.context == context)
+        }
+        else false
+    }
+
+    private fun blendSpellColors(): Int {
+
+    }
+
+    private fun clearCategory() {
+        for(i in 0 until inventory.size)
+            if (i == 0 || i > 5)
+                inventory[i] = ItemStack.EMPTY
     }
 
     override fun canInsert(slot: Int, stack: ItemStack?, dir: Direction?): Boolean {

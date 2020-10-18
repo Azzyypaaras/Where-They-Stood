@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "forgotten:item/basic_rune",
+    "layer1": "forgotten:item/rune/rune_entity_hit"
+  }
+}

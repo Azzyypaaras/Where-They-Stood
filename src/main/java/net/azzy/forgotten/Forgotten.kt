@@ -1,6 +1,7 @@
 package net.azzy.forgotten
 
 import net.azzy.forgotten.registry.*
+import net.azzy.forgotten.util.context.SpellContext
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
@@ -18,11 +19,12 @@ class Forgotten : ModInitializer{
         BlockEntityRegistry.init()
         ScreenHandlerRegistry.init()
         EntityRegistry.init()
+        SpellRegistry.init()
     }
 
     companion object{
-        const val MOD_ID = "forgotten"
-        val FORGOTTEN_TAB: ItemGroup = FabricItemGroupBuilder.build(Identifier(MOD_ID, "aaaa")) { ItemStack(ItemRegistry.PLATE_BASIC.first) }
+        internal const val MOD_ID = "forgotten"
+        val FORGOTTEN_TAB: ItemGroup = FabricItemGroupBuilder.build(Identifier(MOD_ID, "resources")) { ItemStack(ItemRegistry.PLATE_BASIC.first) }
         val WTSLog = LogManager.getLogger(MOD_ID)
     }
 }

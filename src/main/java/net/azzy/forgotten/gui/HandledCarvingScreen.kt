@@ -18,7 +18,7 @@ class HandledCarvingScreen(val handler: CarvingScreenHandler, val pinv: PlayerIn
     private val foreskin = Identifier("forgotten", "textures/gui/container/carving_gui_foreground.png")
     private val baseBackground = Identifier("forgotten", "textures/gui/container/carving_gui_background.png")
     private val plateBackground = Identifier("forgotten", "textures/gui/container/carving_gui_background_plate.png")
-    private val runeBackground = Identifier("forgotten", "textures/gui/container/carving_gui_background.png")
+    private val runeBackground = Identifier("forgotten", "textures/gui/container/carving_gui_background_rune.png")
     private val matrixBackground = Identifier("forgotten", "textures/gui/container/carving_gui_background.png")
 
     init {
@@ -30,6 +30,7 @@ class HandledCarvingScreen(val handler: CarvingScreenHandler, val pinv: PlayerIn
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f)
         client!!.textureManager.bindTexture(with(handler.inv.getStack(0)){
             if(InternalRegistries.Registries.PLATE.contains(item)) plateBackground
+            else if(InternalRegistries.Registries.BLANK.contains(item)) runeBackground
             else baseBackground
         })
         val x = (width - backgroundWidth) / 2

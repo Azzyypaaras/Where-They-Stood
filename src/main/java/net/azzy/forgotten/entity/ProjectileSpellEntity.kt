@@ -25,35 +25,40 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
+import net.minecraft.util.math.Direction
 import net.minecraft.world.World
 import java.util.function.Consumer
+
+private typealias SpellContextConsumer = ContextConsumer<SpellContext.SpellPackage<ProjectileSpellEntity>, SpellContext>
+private typealias SpellContextMap = ContextMap<SpellContext.SpellPackage<ProjectileSpellEntity>, SpellContext>
 
 class ProjectileSpellEntity : AbstractFireballEntity, SpellEntity {
 
     var contextMap: ContextMap<SpellContext.SpellPackage<ProjectileSpellEntity>, SpellContext>
-    var lifespan = 40
+    val modMap = mutableMapOf<SpellContext, Any>()
+    var lifespan = 160
     var piercing = false
     val pkg = SpellContext.SpellPackage(this, world, blockPos, null)
 
     init {
-        contextMap = construct(arrayOf<ContextConsumer<SpellContext.SpellPackage<ProjectileSpellEntity>, SpellContext>>()) as ContextMap<SpellContext.SpellPackage<ProjectileSpellEntity>, SpellContext>
+        contextMap = construct(arrayOf<SpellContextConsumer>()) as SpellContextMap
     }
 
     constructor(entityType: EntityType<out AbstractFireballEntity>, world: World) : super(entityType, world)
 
-    constructor(x: Double, y: Double, z: Double, speedX: Double, speedY: Double, speedZ: Double, world: World, consumers: Array<ContextConsumer<SpellContext.SpellPackage<ProjectileSpellEntity>, SpellContext>>) : super(EntityRegistry.PROJECTILE_SPELL_ENTITY, x, y, z, speedX, speedY, speedZ, world){
-        contextMap = construct(consumers) as ContextMap<SpellContext.SpellPackage<ProjectileSpellEntity>, SpellContext>
+    constructor(x: Double, y: Double, z: Double, speedX: Double, speedY: Double, speedZ: Double, world: World, consumers: Array<SpellContextConsumer>) : super(EntityRegistry.PROJECTILE_SPELL_ENTITY, x, y, z, speedX, speedY, speedZ, world){
+        contextMap = construct(consumers) as SpellContextMap
     }
 
     @Environment(EnvType.CLIENT)
-    constructor(world: World?, x: Double, y: Double, z: Double, velocityX: Double, velocityY: Double, velocityZ: Double, consumers: Array<ContextConsumer<SpellContext.SpellPackage<ProjectileSpellEntity>, SpellContext>>) : super(EntityRegistry.PROJECTILE_SPELL_ENTITY, x, y, z, velocityX, velocityY, velocityZ, world)
+    constructor(world: World?, x: Double, y: Double, z: Double, velocityX: Double, velocityY: Double, velocityZ: Double, consumers: Array<SpellContextConsumer>) : super(EntityRegistry.PROJECTILE_SPELL_ENTITY, x, y, z, velocityX, velocityY, velocityZ, world)
 
-    constructor(owner: LivingEntity, speedX: Double, speedY: Double, speedZ: Double, world: World, consumers: Array<ContextConsumer<SpellContext.SpellPackage<ProjectileSpellEntity>, SpellContext>>): this(owner.x, owner.eyeY, owner.z, speedX, speedY, speedZ, world, consumers) {
+    constructor(owner: LivingEntity, speedX: Double, speedY: Double, speedZ: Double, world: World, consumers: Array<SpellContextConsumer>): this(owner.x, owner.eyeY, owner.z, speedX, speedY, speedZ, world, consumers) {
         this.owner = owner
         this.setRotation(owner.yaw, owner.pitch)
     }
 
-    constructor(owner: LivingEntity, speedX: Double, speedY: Double, speedZ: Double, world: World, lifespan: Int, piercing: Boolean, consumers: Array<ContextConsumer<SpellContext.SpellPackage<ProjectileSpellEntity>, SpellContext>>): this(owner, speedX, speedY, speedZ, world, consumers) {
+    constructor(owner: LivingEntity, speedX: Double, speedY: Double, speedZ: Double, world: World, lifespan: Int, piercing: Boolean, consumers: Array<SpellContextConsumer>): this(owner, speedX, speedY, speedZ, world, consumers) {
         this.lifespan = lifespan
         this.piercing = piercing
     }
@@ -74,6 +79,8 @@ class ProjectileSpellEntity : AbstractFireballEntity, SpellEntity {
             contextMap.execute(pkg, SpellContext.TICK)
         }
     }
+
+    fun map(values: Array<Pair<SpellContext, Any>>) = values.forEach { value -> modMap[value.first] = value.second }
 
     override fun onCollision(hitResult: HitResult?) {
         if(hitResult != null)
@@ -131,6 +138,12 @@ class ProjectileSpellEntity : AbstractFireballEntity, SpellEntity {
             onCollision(hitResult)
         }
         checkBlockCollision()
+    }
+
+    override fun checkBlockCollision() {
+        if(world.getBlockState(blockPos).isOpaque)
+            onCollision(BlockHitResult(pos, Direction.NORTH, blockPos, true))
+        super.checkBlockCollision()
     }
 
     private fun fallbackCollision(spellPackage: SpellContext.SpellPackage<ProjectileSpellEntity>) {
